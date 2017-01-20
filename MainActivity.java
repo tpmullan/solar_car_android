@@ -13,8 +13,6 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 //import android.app.FragmentTransaction;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -24,12 +22,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.TrafficStats;
-import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -37,7 +30,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 //import android.view.Gravity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,7 +47,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.android.gms.location.LocationServices;
-
 
 public class MainActivity extends Activity implements LocationListener {
 
@@ -88,9 +79,6 @@ public class MainActivity extends Activity implements LocationListener {
     public static LocationListener myLocationListener;
     TeamLocation oldLoc = new TeamLocation();
 
-    public static final int USER_INITIATED = 0x1000;
-    public static final int APP_INITIATED = 0x2000;
-    public static final int SERVER_INITIATED =0x3000;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -128,7 +116,6 @@ public class MainActivity extends Activity implements LocationListener {
     }
 
 
-
     //Call this to initialize location settings
     public void initLocationSettings() {
         //Toast.makeText(this, "int settings", Toast.LENGTH_SHORT).show();
@@ -153,7 +140,7 @@ public class MainActivity extends Activity implements LocationListener {
             locationManager.removeUpdates(this);
             // request that the provider send this activity GPS updates every 10 seconds
             //locationManager.requestSingleUpdate(provider, this, null);
-            locationManager.requestLocationUpdates(provider, 10000, 0, this );  //Update every 2 sec
+            locationManager.requestLocationUpdates(provider, 2000, 0, this );  //Update every 2 sec
             //locationManager.requestLocationUpdates(provider, 10000, 30, this ); //30 meters gets rid of noise from stop lights
 
 
@@ -241,9 +228,8 @@ public class MainActivity extends Activity implements LocationListener {
         newLoc.setLatitude(location.getLatitude());
         newLoc.setAltitude(location.getAltitude());
         newLoc.setAccuracy(location.getAccuracy());
-        newLoc.setId(TeamIndex + 1);
+        newLoc.setId(TeamIndex+1);
 
-        //Toast.makeText(getBaseContext(), " d", Toast.LENGTH_SHORT).show();
 
         //TextView TxtJudge = (TextView) findViewById(R.id.JudgeName);
         //TextView TxtTeamName = (TextView) findViewById(R.id.TeamName);
@@ -309,19 +295,10 @@ public class MainActivity extends Activity implements LocationListener {
 
         // Send data to Shane's server
         call_Shane.enqueue(new Callback<TeamLocation>() {
-
-
             @Override  /*If you get a response, do this*/
             public void onResponse(Response<TeamLocation> response, Retrofit retrofit) {
                 int statusCode = response.code();
                 TeamLocation receivedLoc = response.body();
-
-                try {
-                    TrafficStats.setThreadStatsTag(APP_INITIATED);
-                    // make network request using HttpClient.execute()
-                } finally {
-                    TrafficStats.clearThreadStatsTag();
-                }
 
                 //Toast.makeText(getBaseContext(), receivedLoc.getUpdatedAt(), Toast.LENGTH_SHORT).show();
 
@@ -339,7 +316,6 @@ public class MainActivity extends Activity implements LocationListener {
 
     }
 
-    //public float batteryInfo (){
     public float batteryInfo (){
 
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -348,14 +324,6 @@ public class MainActivity extends Activity implements LocationListener {
         int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
         float batteryPct = level / (float)scale;
-
-
-            try {
-                TrafficStats.setThreadStatsTag(APP_INITIATED);
-                // make network request using HttpClient.execute()
-            } finally {
-                TrafficStats.clearThreadStatsTag();
-            }
 
         return batteryPct;
     }
@@ -538,6 +506,5 @@ public class MainActivity extends Activity implements LocationListener {
             }
         }
     }
-
 
 }
