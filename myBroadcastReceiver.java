@@ -28,15 +28,11 @@ import android.widget.Toast;
             context.startService(intent);
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             if (wifiManager !=null){
-                Toast.makeText(context, "wifi not null", Toast.LENGTH_SHORT).show();
             }
             NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
             if (networkInfo != null) {
                 if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
                     //get the different network states
-                    if (networkInfo.getState() == NetworkInfo.State.CONNECTING || networkInfo.getState() == NetworkInfo.State.CONNECTED) {
-                        Toast.makeText(context, "wifi connecting", Toast.LENGTH_SHORT).show();
-                    }
                     if (networkInfo.getState() == NetworkInfo.State.CONNECTED) {
                         Toast.makeText(context, "wifi connected", Toast.LENGTH_SHORT).show();
                     }
