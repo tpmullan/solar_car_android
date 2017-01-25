@@ -51,7 +51,7 @@ import com.google.android.gms.location.LocationServices;
 public class MainActivity extends Activity implements LocationListener {
 
 
-
+public int tmp
     public static final String BASE_URL = "https://solar.tpmullan.com";
     public static final String BASE_URL_Shane = "http://solarcar.herokuapp.com/";
     protected LocationManager locationManager; //The Location Manager we use to get Lat and Long
