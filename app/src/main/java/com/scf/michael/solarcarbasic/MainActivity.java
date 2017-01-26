@@ -51,8 +51,7 @@ import com.google.android.gms.location.LocationServices;
 public class MainActivity extends Activity implements LocationListener {
 
 
-    public static final String BASE_URL = "https://solar.tpmullan.com";
-    public static final String BASE_URL_Shane = "http://solarcar.herokuapp.com/";
+    public static final String BASE_URL = "https://solar.tpmullan.com/api/";
     protected LocationManager locationManager; //The Location Manager we use to get Lat and Long
     boolean GPSEnabled = true;
     private static final int REQUEST_CODE_LOCATION = 2;
@@ -63,12 +62,8 @@ public class MainActivity extends Activity implements LocationListener {
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build();
-    private Retrofit retrofit_Shane = new Retrofit.Builder()
-            .baseUrl(BASE_URL_Shane)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build();
-    private CrossCountrySolarApiEndpoint apiService = retrofit.create(CrossCountrySolarApiEndpoint.class);
-    private CrossCountrySolarApiEndpoint apiService_Shane=retrofit_Shane.create(CrossCountrySolarApiEndpoint.class);
+
+    private ClosedTrackSolarApiEndpoint apiService = retrofit.create(ClosedTrackSolarApiEndpoint.class);
 
     //API to connect to Google Play
     private GoogleApiClient mGoogleApiClient;
@@ -242,10 +237,6 @@ public class MainActivity extends Activity implements LocationListener {
 
         //newLoc.setTeamId(TeamIndex + 1);
         newLoc.setUpdatedAt(Calendar.getInstance().getTime().toString());
-        //Call<TeamLocation> call = apiService.createTeamLocation(newLoc);
-        Call<TeamLocation> call = apiService.updateTeamLocation(TeamIndex + 98194, newLoc);
-        //Call<TeamLocation> call_Shane = apiService_Shane.createTeamLocation(newLoc);
-        //Call<TeamLocation> call_Shane = apiService_Shane.updateTeamLocation(TeamIndex+18106, newLoc);
 
         TeamIndexWeb=TeamIndex+1;
         /*if (TeamIndex <=3)
@@ -256,8 +247,8 @@ public class MainActivity extends Activity implements LocationListener {
             TeamIndexWeb=TeamIndex+4;
         }*/
 
-        //send data to Shane's server
-        Call<TeamLocation> call_Shane = apiService_Shane.updateTeamLocation(TeamIndexWeb, newLoc);
+        //send data to server
+        Call<TeamLocation> call = apiService.updateTeamLocation(TeamIndexWeb, newLoc);
 
         String Phone_ID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -277,23 +268,9 @@ public class MainActivity extends Activity implements LocationListener {
         } catch (Exception e) {
             createFile(Phone_ID + ", " + newLoc.getUpdatedAt() + ", " + newLoc.getLatitude().toString() + ", " + newLoc.getLongitude().toString() +", "+ batteryPct.toString()+ ", 0, N/A, N/A, N/A, 0, 0");
         }
-        //Send data to Tom's Server
-        //call.enqueue(new Callback<TeamLocation>() {
-        //@Override  /*If you get a response, do this*/
-                /*public void onResponse(Response<TeamLocation> response, Retrofit retrofit) {
-                    int statusCode = response.code();
-                    TeamLocation receivedLoc = response.body();
-                }*/
-
-        //@Override /*if you get an error, do this*/
-        //public void onFailure(Throwable t) {
-        // Log error here since request failed
-        //}
-        //});
-
 
         // Send data to Shane's server
-        call_Shane.enqueue(new Callback<TeamLocation>() {
+        call.enqueue(new Callback<TeamLocation>() {
             @Override  /*If you get a response, do this*/
             public void onResponse(Response<TeamLocation> response, Retrofit retrofit) {
                 int statusCode = response.code();
