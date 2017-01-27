@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.scf.michael.solarcarbasic"
+        applicationId "com.scf.michael.solarcartrack"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
@@ -31,3 +31,5 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     provided 'org.glassfish:javax.annotation:10.0-b28'
 }
+
+
