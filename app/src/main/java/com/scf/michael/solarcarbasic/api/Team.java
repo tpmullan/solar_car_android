@@ -1,4 +1,4 @@
-package com.scf.michael.solarcarbasic;
+package com.scf.michael.solarcarbasic.api;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
