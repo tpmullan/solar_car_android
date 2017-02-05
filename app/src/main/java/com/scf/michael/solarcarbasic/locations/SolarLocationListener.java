@@ -4,21 +4,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.location.LocationListener;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.scf.michael.solarcarbasic.api.ClosedTrackSolarApiEndpoint;
+import com.scf.michael.solarcarbasic.api.ServiceGenerator;
 import com.scf.michael.solarcarbasic.api.TeamLocation;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import retrofit2.Call;
@@ -31,27 +35,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by tom on 2/4/17.
  */
 
-public class SolarLocationListener implements android.location.LocationListener {
+public class SolarLocationListener implements LocationListener {
 
     private static final String TAG = "LocationListner";
-    public static final String BASE_URL = "https://solar.tpmullan.com/api/";
 
     public Location mLastLocation;
     private Context mContext;
-
-    boolean GPSEnabled = true;
-
-    private Gson gson = new GsonBuilder()
-            .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-            .create();
-    private Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build();
-
-    private ClosedTrackSolarApiEndpoint apiService = retrofit.create(ClosedTrackSolarApiEndpoint.class);
-
-    TeamLocation oldLoc = new TeamLocation();
+    private ClosedTrackSolarApiEndpoint apiService;
 
     public int TeamIndex=1;
     public SolarLocationListener(String provider, Context context)
@@ -59,6 +49,7 @@ public class SolarLocationListener implements android.location.LocationListener 
         Log.e(TAG, "SolarLocationListener " + provider);
         mLastLocation = new Location(provider);
         mContext = context;
+        apiService = ServiceGenerator.createService(ClosedTrackSolarApiEndpoint.class);
     }
 
     @Override
@@ -69,7 +60,6 @@ public class SolarLocationListener implements android.location.LocationListener 
             return;
         }
 
-        //Display the Lat and Long in the txt boxes
         TeamLocation newLoc = new TeamLocation();
         newLoc.setLongitude(location.getLongitude());
         newLoc.setLatitude(location.getLatitude());
@@ -78,30 +68,13 @@ public class SolarLocationListener implements android.location.LocationListener 
         newLoc.setId(TeamIndex);
 
 
-        Integer TeamIndexWeb=0;
-
         newLoc.setUpdatedAt(Calendar.getInstance().getTime().toString());
 
-        TeamIndexWeb=TeamIndex+1;
-
         //send data to server
-        Call<TeamLocation> call = apiService.updateTeamLocation(TeamIndexWeb, newLoc);
+        Call<TeamLocation> call = apiService.updateTeamLocation(TeamIndex, newLoc);
 
         String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
-
         Float batteryPct = batteryInfo();
-
-        try {
-            //TextView TxtStatus = (TextView) findViewById(R.id.Status);
-            String status = "N/A";
-            String judge="Unknown";
-            String team="Unknown";
-
-
-            createFile(Phone_ID + ", " + newLoc.getUpdatedAt() + ", " + newLoc.getLatitude().toString() + ", " + newLoc.getLongitude().toString() +", " +batteryPct.toString() + ", " + newLoc.getAltitude()+ ", " + status+ ", " + judge+ ", " + team+", "+ location.getAccuracy()+", "+location.getSpeed() +", "+location.getBearing() ); //CreateFile -writes important data to a csv file
-        } catch (Exception e) {
-            createFile(Phone_ID + ", " + newLoc.getUpdatedAt() + ", " + newLoc.getLatitude().toString() + ", " + newLoc.getLongitude().toString() +", "+ batteryPct.toString()+ ", 0, N/A, N/A, N/A, 0, 0");
-        }
 
         // Send data to Shane's server
         call.enqueue(new Callback<TeamLocation>() {
@@ -114,10 +87,29 @@ public class SolarLocationListener implements android.location.LocationListener 
             @Override /*if you get an error, do this*/
             public void onFailure(Call<TeamLocation> call, Throwable t) {
                 // Log error here since request failed
+                Log.e(TAG, "Failed to post location");
             }
 
         });
-        oldLoc=newLoc;
+
+        createFile(getFileString(location, newLoc, Phone_ID, batteryPct)); //CreateFile -writes important data to a csv file
+    }
+
+    @NonNull
+    private String getFileString(Location location, TeamLocation newLoc, String phone_ID, Float batteryPct) {
+        String output;
+        String status = "N/A";
+        String judge="Unknown";
+        String team="Unknown";
+
+        try {
+            output = phone_ID + ", " + newLoc.getUpdatedAt() + ", " + newLoc.getLatitude().toString() + ", " + newLoc.getLongitude().toString() +", " +batteryPct.toString() + ", " + newLoc.getAltitude()+ ", " + status+ ", " + judge+ ", " + team+", "+ location.getAccuracy()+", "+location.getSpeed() +", "+location.getBearing();
+        } catch (Exception e) {
+            output = phone_ID + ", " + newLoc.getUpdatedAt() + ", " + newLoc.getLatitude().toString() + ", " + newLoc.getLongitude().toString() +", "+ batteryPct.toString()+ ", 0, N/A, N/A, N/A, 0, 0";
+        }
+
+        return output;
+
     }
 
     @Override
@@ -138,23 +130,19 @@ public class SolarLocationListener implements android.location.LocationListener 
     public void createFile(String string) {
 
         String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
-        Calendar c = Calendar.getInstance();
-        String today_string =  String.valueOf(c.get(Calendar.YEAR)).concat("-").concat(String.valueOf(c.get(Calendar.MONTH)+1)).concat("-").concat(String.valueOf(c.get(Calendar.DAY_OF_MONTH)));
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd");
 
-        String filename= "SolarCarTracker ".concat(Phone_ID).concat(" ").concat(today_string) ;
+        String filename= "SolarCarTracker " + Phone_ID + " " + tf.format(calendar.getTime());
 
-
-        //String filename = "SolarCarTracker";
         FileOutputStream outputStream;
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
         final File myDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
 
-
         try {
-            File myFile = new File(path+"/"+filename+".txt");
+            File myFile = new File(myDir.getPath()+"/"+filename+".txt");
 
             if(!myDir.exists()){
-                myDir.mkdirs();//make the folders where we write folders
+                myDir.mkdirs(); //make the folders where we write folders
             }
 
             if ( !myFile.exists()) {
@@ -166,10 +154,7 @@ public class SolarLocationListener implements android.location.LocationListener 
                 myOutWriter.append("\n");
                 myOutWriter.close();
                 fOut.close();
-
-
             }
-
 
             FileOutputStream fOut = new FileOutputStream(myFile, true); //true means we append
             OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
