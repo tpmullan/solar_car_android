@@ -25,11 +25,13 @@ public interface ClosedTrackSolarApiEndpoint {
     @PUT("/teams/{id}")
     Call<Team> updateTeam(@Path("id") int teamId, @Body Team team);
     @GET("/team_locations")
-    List<TeamLocation> getTeamLocations();
+    Call<List<TeamLocation>> getTeamLocations();
     @POST("/team_locations")
     Call<TeamLocation> createTeamLocation(@Body TeamLocation team_location);
     @GET("/team_locations/{id}")
     Call<TeamLocation> getTeamLocation(@Path("id") int teamId);
     @PUT("/team_locations/{id}")
     Call<TeamLocation> updateTeamLocation(@Path("id") int teamId, @Body TeamLocation team_location);
+    @POST("/auth")
+    Call<Auth> login(@Body Auth user);
 }

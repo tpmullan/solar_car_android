@@ -65,7 +65,7 @@ public class SolarLocationListener implements LocationListener {
         newLoc.setLatitude(location.getLatitude());
         newLoc.setAltitude(location.getAltitude());
         newLoc.setAccuracy(location.getAccuracy());
-        newLoc.setId(TeamIndex);
+        newLoc.setTeamId(TeamIndex);
 
 
         newLoc.setUpdatedAt(Calendar.getInstance().getTime().toString());

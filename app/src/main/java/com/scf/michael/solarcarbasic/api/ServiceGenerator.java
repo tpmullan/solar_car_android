@@ -1,8 +1,12 @@
 package com.scf.michael.solarcarbasic.api;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -10,8 +14,13 @@ import java.net.HttpCookie;
 import java.net.URI;
 import java.util.TimeZone;
 
+import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okio.Buffer;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -40,6 +49,30 @@ public class ServiceGenerator {
 
     public static <S> S createService(Class<S> serviceClass) {
 
+        httpClient.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Interceptor.Chain chain) throws IOException {
+                Request original = chain.request();
+                Log.d("RETROFIT request", bodyToString(original.body()));
+                Log.d("RETROFIT params", original.url().toString());
+                Auth authToken = Auth.getInstance();
+                Response response = chain.proceed(authToken.setHeaders(original));
+
+                /*String body = response.body().string();
+                Log.d("RETROFIT response", body);
+                if (response.code() == 422 && body.equals("Invalid authenticity token")) {
+                    response = chain.proceed(authToken.setHeaders(original));
+                    authToken.update(response.headers());
+                } else {
+                    response = response.newBuilder()
+                            .body(ResponseBody.create(response.body().contentType(), body))
+                            .build();
+                }*/
+
+                return response;
+            }
+        });
+
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
 
         HttpCookie httpTimezoneCookie = new HttpCookie("timezone", TimeZone.getDefault().getID());
@@ -51,6 +84,22 @@ public class ServiceGenerator {
         Retrofit retrofit = builder.client(client).build();
 
         return retrofit.create(serviceClass);
+    }
+
+    @NonNull
+    public static String bodyToString(final RequestBody request){
+        try {
+            final RequestBody copy = request;
+            final Buffer buffer = new Buffer();
+            if(copy != null)
+                copy.writeTo(buffer);
+            else
+                return "";
+            return buffer.readUtf8();
+        }
+        catch (final IOException e) {
+            return "did not work";
+        }
     }
 
     public static Gson getGson() {

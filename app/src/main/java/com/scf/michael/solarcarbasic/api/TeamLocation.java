@@ -1,52 +1,67 @@
 package com.scf.michael.solarcarbasic.api;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import javax.annotation.Generated;
+
+
 @Generated("org.jsonschema2pojo")
-public class TeamLocation {
-    @SerializedName("id")
+@Table(name = "TeamLocations")
+public class TeamLocation extends Model {
+    @Column(name = "remote_id")
+    @SerializedName("remote_id")
     @Expose
-    private Integer id;
+    private Integer remote_id;
+    @Column(name = "address")
     @SerializedName("address")
     @Expose
     private String address;
+    @Column(name = "latitude")
     @SerializedName("latitude")
     @Expose
     private Double latitude;
+    @Column(name = "longitude")
     @SerializedName("longitude")
     @Expose
     private Double longitude;
+    @Column(name = "team_id")
     @SerializedName("team_id")
     @Expose
     private Integer teamId;
+    @Column(name = "created_at")
     @SerializedName("created_at")
     @Expose
     private String createdAt;
+    @Column(name = "updated_at")
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
+    @Column(name = "altitude")
     @SerializedName("altitude")
     @Expose
     private Double altitude;
+    @Column(name = "accuracy")
     @SerializedName("accuracy")
     @Expose
     private Float accuracy;
     /**
      *
      * @return
-     * The id
+     * The remote_id
      */
-    public Integer getId() {
-        return id;
+    public Integer getRemoteId() {
+        return remote_id;
     }
     /**
      *
      * @param id
-     * The id
+     * The remote_id
      */
-    public void setId(Integer id) {
-        this.id = id;
+    public void setRemoteId(Integer id) {
+        this.remote_id = id;
     }
     /**
      *

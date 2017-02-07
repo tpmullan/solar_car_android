@@ -1,29 +1,24 @@
 package com.scf.michael.solarcarbasic;
 
-import java.util.Locale;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.provider.Settings;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.activeandroid.ActiveAndroid;
+import com.activeandroid.Configuration;
+import com.scf.michael.solarcarbasic.api.Auth;
+import com.scf.michael.solarcarbasic.api.TeamLocation;
 import com.scf.michael.solarcarbasic.locations.MyLocationService;
 
 public class MainActivity extends Activity {
@@ -57,6 +52,19 @@ public class MainActivity extends Activity {
                 }
             }
         });
+
+  /*      Configuration dbConfiguration = new Configuration.Builder(this)
+                .setDatabaseName("SolarCar.db")
+                .addModelClass(Auth.class)
+                .addModelClass(TeamLocation.class)
+                .create();
+
+        ActiveAndroid.initialize(dbConfiguration);
+
+        Auth defaultUser = Auth.getInstance();
+        defaultUser.setUsername("tom");
+        defaultUser.setPassword("1992joy321");
+        defaultUser.login();*/
     }
 
 
