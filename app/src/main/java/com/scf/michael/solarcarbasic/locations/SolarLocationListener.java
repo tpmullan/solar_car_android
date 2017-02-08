@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -60,15 +61,18 @@ public class SolarLocationListener implements LocationListener {
             return;
         }
 
-        TeamLocation newLoc = new TeamLocation();
+        Realm realm = Realm.getDefaultInstance();
+        TeamLocation newLoc = realm.createObject(TeamLocation.class);
+        realm.beginTransaction();
+
         newLoc.setLongitude(location.getLongitude());
         newLoc.setLatitude(location.getLatitude());
         newLoc.setAltitude(location.getAltitude());
         newLoc.setAccuracy(location.getAccuracy());
         newLoc.setTeamId(TeamIndex);
-
-
         newLoc.setUpdatedAt(Calendar.getInstance().getTime().toString());
+
+        realm.commitTransaction();
 
         //send data to server
         Call<TeamLocation> call = apiService.updateTeamLocation(TeamIndex, newLoc);
@@ -91,6 +95,8 @@ public class SolarLocationListener implements LocationListener {
             }
 
         });
+
+
 
         createFile(getFileString(location, newLoc, Phone_ID, batteryPct)); //CreateFile -writes important data to a csv file
     }

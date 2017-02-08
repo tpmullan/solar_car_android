@@ -15,11 +15,11 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
-import com.activeandroid.ActiveAndroid;
-import com.activeandroid.Configuration;
 import com.scf.michael.solarcarbasic.api.Auth;
 import com.scf.michael.solarcarbasic.api.TeamLocation;
 import com.scf.michael.solarcarbasic.locations.MyLocationService;
+
+import io.realm.Realm;
 
 public class MainActivity extends Activity {
 
@@ -33,6 +33,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Realm.init(this);
 
         // Get the LocationManager object from the System Service LOCATION_SERVICE
         mLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
@@ -53,18 +54,13 @@ public class MainActivity extends Activity {
             }
         });
 
-  /*      Configuration dbConfiguration = new Configuration.Builder(this)
-                .setDatabaseName("SolarCar.db")
-                .addModelClass(Auth.class)
-                .addModelClass(TeamLocation.class)
-                .create();
-
-        ActiveAndroid.initialize(dbConfiguration);
-
+        Realm realm = Realm.getDefaultInstance();
         Auth defaultUser = Auth.getInstance();
+        realm.beginTransaction();
         defaultUser.setUsername("tom");
         defaultUser.setPassword("1992joy321");
-        defaultUser.login();*/
+        realm.commitTransaction();
+        defaultUser.login();
     }
 
 

@@ -1,36 +1,30 @@
 package com.scf.michael.solarcarbasic.api;
 
 import android.util.Log;
-
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
-import com.activeandroid.query.Select;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.internal.Streams;
 
 import java.io.IOException;
 
+import io.realm.Realm;
+import io.realm.RealmObject;
 import okhttp3.Request;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
-@Table(name = "Auth")
-public class Auth extends Model {
+public class Auth extends RealmObject {
 
   private static final String TAG = "Auth Class";
-  @Column(name = "token")
   @SerializedName("token")
   @Expose
   private String token;
 
-  @Column(name = "username")
   @SerializedName("username")
   @Expose
   private String username;
 
-  @Column(name = "password")
   @SerializedName("password")
   @Expose
   private String password;
@@ -62,27 +56,38 @@ public class Auth extends Model {
   public void login() {
     ClosedTrackSolarApiEndpoint endpoint = ServiceGenerator.createService(ClosedTrackSolarApiEndpoint.class);
     Call<Auth> call =  endpoint.login(this);
-    try {
-      Response<Auth> response = call.execute();
-      if (response.isSuccessful()) {
-        this.token = response.body().getToken();
-        this.save();
-      } else {
-        Log.e(TAG,"Error logging in");
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+      call.enqueue(new Callback<Auth>() {
+        @Override
+        public void onResponse(Call<Auth> call, final Response<Auth> response) {
+          if (response.isSuccessful()) {
+            Realm realm = Realm.getDefaultInstance();
+            realm.executeTransaction(
+                    new Realm.Transaction() {
+                      @Override
+                      public void execute(Realm realm) {
+                        setToken(response.body().getToken());
+                      }
+                    }
+            );
+          } else {
+            Log.e(TAG,"Error logging in");
+          }
+        }
+
+        @Override
+        public void onFailure(Call<Auth> call, Throwable t) {
+          Log.e(TAG,"Error logging in");
+        }
+      });
   }
 
   public static Auth getInstance() {
-    Auth first = new Select()
-            .from(Auth.class)
-            .limit(1)
-            .orderBy("id asc")
-            .executeSingle();
+    Realm realm = Realm.getDefaultInstance();
+    Auth first = realm.where(Auth.class).findFirst();
     if (first == null) {
-      first = new Auth();
+      realm.beginTransaction();
+      first = realm.createObject(Auth.class);
+      realm.commitTransaction();
     }
     return first;
   }

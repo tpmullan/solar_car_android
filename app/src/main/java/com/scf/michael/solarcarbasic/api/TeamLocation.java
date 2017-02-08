@@ -1,49 +1,38 @@
 package com.scf.michael.solarcarbasic.api;
 
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import javax.annotation.Generated;
 
+import io.realm.RealmObject ;
+
 
 @Generated("org.jsonschema2pojo")
-@Table(name = "TeamLocations")
-public class TeamLocation extends Model {
-    @Column(name = "remote_id")
+public class TeamLocation extends RealmObject  {
     @SerializedName("remote_id")
     @Expose
     private Integer remote_id;
-    @Column(name = "address")
     @SerializedName("address")
     @Expose
     private String address;
-    @Column(name = "latitude")
     @SerializedName("latitude")
     @Expose
     private Double latitude;
-    @Column(name = "longitude")
     @SerializedName("longitude")
     @Expose
     private Double longitude;
-    @Column(name = "team_id")
     @SerializedName("team_id")
     @Expose
     private Integer teamId;
-    @Column(name = "created_at")
     @SerializedName("created_at")
     @Expose
     private String createdAt;
-    @Column(name = "updated_at")
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
-    @Column(name = "altitude")
     @SerializedName("altitude")
     @Expose
     private Double altitude;
-    @Column(name = "accuracy")
     @SerializedName("accuracy")
     @Expose
     private Float accuracy;
