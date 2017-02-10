@@ -1,7 +1,6 @@
 package com.scf.michael.solarcarbasic.api;
 
 import android.util.Log;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.internal.Streams;
 
@@ -18,15 +17,12 @@ public class Auth extends RealmObject {
 
   private static final String TAG = "Auth Class";
   @SerializedName("token")
-  @Expose
   private String token;
 
   @SerializedName("username")
-  @Expose
   private String username;
 
   @SerializedName("password")
-  @Expose
   private String password;
 
   public String getToken() {
@@ -55,12 +51,14 @@ public class Auth extends RealmObject {
 
   public void login() {
     ClosedTrackSolarApiEndpoint endpoint = ServiceGenerator.createService(ClosedTrackSolarApiEndpoint.class);
-    Call<Auth> call =  endpoint.login(this);
+    final Realm realm = Realm.getDefaultInstance();
+
+    Call<Auth> call =  endpoint.login(realm.copyFromRealm(this));
       call.enqueue(new Callback<Auth>() {
         @Override
         public void onResponse(Call<Auth> call, final Response<Auth> response) {
           if (response.isSuccessful()) {
-            Realm realm = Realm.getDefaultInstance();
+
             realm.executeTransaction(
                     new Realm.Transaction() {
                       @Override
@@ -96,8 +94,8 @@ public class Auth extends RealmObject {
     // Request customization: add request headers
     Request.Builder requestBuilder = original.newBuilder()
             .method(original.method(), original.body());
-    if (token!=null && !token.equals("")) {
-      requestBuilder.header("token", getToken());
+    if (getToken()!=null && !getToken().equals("")) {
+      requestBuilder.header("Authorization", "Token " + getToken());
     }
     return requestBuilder.build();
   }

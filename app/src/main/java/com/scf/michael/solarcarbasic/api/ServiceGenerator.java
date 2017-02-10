@@ -3,6 +3,8 @@ package com.scf.michael.solarcarbasic.api;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -14,12 +16,14 @@ import java.net.HttpCookie;
 import java.net.URI;
 import java.util.TimeZone;
 
+import io.realm.RealmObject;
 import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okio.Buffer;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -35,8 +39,17 @@ public class ServiceGenerator {
 
     private static Gson gson =
             new GsonBuilder()
-                    .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
-                    .excludeFieldsWithoutExposeAnnotation()
+                    .setExclusionStrategies(new ExclusionStrategy() {
+                        @Override
+                        public boolean shouldSkipField(FieldAttributes f) {
+                            return f.getDeclaringClass().equals(RealmObject.class);
+                        }
+
+                        @Override
+                        public boolean shouldSkipClass(Class<?> clazz) {
+                            return false;
+                        }
+                    })
                     .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
                     .create();
 
@@ -58,16 +71,16 @@ public class ServiceGenerator {
                 Auth authToken = Auth.getInstance();
                 Response response = chain.proceed(authToken.setHeaders(original));
 
-                /*String body = response.body().string();
+                String body = response.body().string();
                 Log.d("RETROFIT response", body);
                 if (response.code() == 422 && body.equals("Invalid authenticity token")) {
                     response = chain.proceed(authToken.setHeaders(original));
-                    authToken.update(response.headers());
+                    //authToken.update(response.headers());
                 } else {
                     response = response.newBuilder()
                             .body(ResponseBody.create(response.body().contentType(), body))
                             .build();
-                }*/
+                }
 
                 return response;
             }

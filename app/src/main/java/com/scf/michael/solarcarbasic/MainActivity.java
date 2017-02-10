@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.scf.michael.solarcarbasic.api.Auth;
 import com.scf.michael.solarcarbasic.api.TeamLocation;
@@ -21,7 +22,7 @@ import com.scf.michael.solarcarbasic.locations.MyLocationService;
 
 import io.realm.Realm;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 
 
     private LocationManager mLocationManager = null;
@@ -33,7 +34,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Realm.init(this);
 
         // Get the LocationManager object from the System Service LOCATION_SERVICE
         mLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
@@ -54,12 +54,13 @@ public class MainActivity extends Activity {
             }
         });
 
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = getRealm();
         Auth defaultUser = Auth.getInstance();
         realm.beginTransaction();
         defaultUser.setUsername("tom");
         defaultUser.setPassword("1992joy321");
         realm.commitTransaction();
+
         defaultUser.login();
     }
 
@@ -85,12 +86,14 @@ public class MainActivity extends Activity {
             OpenLocationSettings();
         }
 
-        if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+        if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission( this, Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ) {
 
-            ActivityCompat.requestPermissions( this, new String[] {  Manifest.permission.ACCESS_FINE_LOCATION },
+            ActivityCompat.requestPermissions( this, new String[] {  Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE },
                     REQUEST_CODE_LOCATION );
+        } else {
+            startService(locationService);
         }
-        startService(locationService);
     }
 
     private void stop_service()
@@ -135,12 +138,21 @@ public class MainActivity extends Activity {
                                            String[] permissions,
                                            int[] grantResults) {
         if (requestCode == REQUEST_CODE_LOCATION) {
-            if (grantResults.length == 1
+            if (grantResults.length >= 1
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // success!
-                //Location myLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                enable_service();
             } else {
                 // Permission was denied or request was cancelled
+                Toast tp = Toast.makeText(getApplicationContext(), "This app will not work without that permission", Toast.LENGTH_LONG);
+                tp.getView().setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        enable_service();
+                                                    }
+                                                }
+                );
+                tp.show();
             }
         }
     }

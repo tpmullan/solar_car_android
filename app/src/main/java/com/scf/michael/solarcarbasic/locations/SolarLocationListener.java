@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.scf.michael.solarcarbasic.MainActivity;
 import com.scf.michael.solarcarbasic.api.ClosedTrackSolarApiEndpoint;
 import com.scf.michael.solarcarbasic.api.ServiceGenerator;
 import com.scf.michael.solarcarbasic.api.TeamLocation;
@@ -62,9 +63,10 @@ public class SolarLocationListener implements LocationListener {
         }
 
         Realm realm = Realm.getDefaultInstance();
-        TeamLocation newLoc = realm.createObject(TeamLocation.class);
+
         realm.beginTransaction();
 
+        TeamLocation newLoc = realm.createObject(TeamLocation.class);
         newLoc.setLongitude(location.getLongitude());
         newLoc.setLatitude(location.getLatitude());
         newLoc.setAltitude(location.getAltitude());
@@ -75,7 +77,7 @@ public class SolarLocationListener implements LocationListener {
         realm.commitTransaction();
 
         //send data to server
-        Call<TeamLocation> call = apiService.updateTeamLocation(TeamIndex, newLoc);
+        Call<TeamLocation> call = apiService.createTeamLocation(newLoc);
 
         String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
         Float batteryPct = batteryInfo();
@@ -135,17 +137,20 @@ public class SolarLocationListener implements LocationListener {
 
     public void createFile(String string) {
 
+        if (Environment.getExternalStorageState().equals(
+                Environment.MEDIA_MOUNTED)) {
+            // you can go on
+
         String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd");
 
-        String filename= "SolarCarTracker " + Phone_ID + " " + tf.format(calendar.getTime());
+        String filename= "SolarCarTracker-" + Phone_ID + "-" + tf.format(calendar.getTime()) +".csv";
 
-        FileOutputStream outputStream;
-        final File myDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        final File myDir = Environment.getExternalStorageDirectory().getAbsoluteFile();
 
         try {
-            File myFile = new File(myDir.getPath()+"/"+filename+".txt");
+            File myFile = new File(myDir.getPath(), filename);
 
             if(!myDir.exists()){
                 myDir.mkdirs(); //make the folders where we write folders
@@ -171,8 +176,9 @@ public class SolarLocationListener implements LocationListener {
 
         }catch (Exception e){
             e.printStackTrace();
-            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext.getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 
+        }
         }
 
     }
