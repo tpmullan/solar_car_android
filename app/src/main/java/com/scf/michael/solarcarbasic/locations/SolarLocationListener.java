@@ -77,7 +77,7 @@ public class SolarLocationListener implements LocationListener {
         realm.commitTransaction();
 
         //send data to server
-        Call<TeamLocation> call = apiService.createTeamLocation(newLoc);
+        Call<TeamLocation> call = apiService.createTeamLocation(realm.copyFromRealm(newLoc));
 
         String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
         Float batteryPct = batteryInfo();

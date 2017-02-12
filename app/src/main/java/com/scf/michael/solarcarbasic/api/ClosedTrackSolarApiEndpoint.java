@@ -16,22 +16,22 @@ import retrofit2.http.Path;
 public interface ClosedTrackSolarApiEndpoint {
     // Request method and URL specified in the annotation
     // Callback for the parsed response is the last parameter
-    @GET("teams.json")
+    @GET("teams/")
     List<Team> getTeams();
-    @POST("teams.json")
+    @POST("teams/")
     Call<Team> createTeam(@Body Team team);
-    @GET("teams/{id}.json")
+    @GET("teams/{id}/")
     Call<Team> getTeam(@Path("id") int teamId);
-    @PUT("teams/{id}.json")
+    @PUT("teams/{id}/")
     Call<Team> updateTeam(@Path("id") int teamId, @Body Team team);
-    @GET("team_locations.json")
+    @GET("team_locations/")
     Call<List<TeamLocation>> getTeamLocations();
-    @POST("team_locations.json")
+    @POST("team_locations/")
     Call<TeamLocation> createTeamLocation(@Body TeamLocation team_location);
-    @GET("team_locations/{id}.json")
+    @GET("team_locations/{id}/")
     Call<TeamLocation> getTeamLocation(@Path("id") int teamId);
-    @PUT("team_locations/{id}.json")
+    @PUT("team_locations/{id}/")
     Call<TeamLocation> updateTeamLocation(@Path("id") int teamId, @Body TeamLocation team_location);
-    @POST("auth")
+    @POST("auth/")
     Call<Auth> login(@Body Auth user);
 }

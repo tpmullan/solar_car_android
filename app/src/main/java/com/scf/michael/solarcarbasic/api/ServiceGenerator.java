@@ -34,6 +34,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ServiceGenerator {
 
     private static final String BASE_URL = "https://solar.tpmullan.com/api/";
+    //private static final String BASE_URL = "http://desktop:8000/api/";
 
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
@@ -68,13 +69,23 @@ public class ServiceGenerator {
                 Request original = chain.request();
                 Log.d("RETROFIT request", bodyToString(original.body()));
                 Log.d("RETROFIT params", original.url().toString());
+
+
                 Auth authToken = Auth.getInstance();
-                Response response = chain.proceed(authToken.setHeaders(original));
+                Request.Builder requestBuilder = original.newBuilder()
+                        .method(original.method(), original.body());
+                requestBuilder.header("Content-Type", "application/json");
+                requestBuilder.header("Accept","application/json");
+                Request requestWithHeaders = authToken.setHeaders(requestBuilder).build();
+
+                Log.d("RETROFIT headers", requestWithHeaders.headers().toString());
+
+                Response response = chain.proceed(requestWithHeaders);
 
                 String body = response.body().string();
                 Log.d("RETROFIT response", body);
                 if (response.code() == 422 && body.equals("Invalid authenticity token")) {
-                    response = chain.proceed(authToken.setHeaders(original));
+                    response = chain.proceed(authToken.setHeaders(requestBuilder).build());
                     //authToken.update(response.headers());
                 } else {
                     response = response.newBuilder()
