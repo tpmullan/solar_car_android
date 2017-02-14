@@ -9,21 +9,21 @@ import io.realm.RealmObject ;
 
 @Generated("org.jsonschema2pojo")
 public class TeamLocation extends RealmObject  {
-    @SerializedName("remote_id")
+    @SerializedName("id")
     @Expose
     private Integer remote_id;
     @SerializedName("address")
     @Expose
     private String address;
-    @SerializedName("latitude")
+    @SerializedName("lat")
     @Expose
     private Double latitude;
-    @SerializedName("longitude")
+    @SerializedName("lon")
     @Expose
     private Double longitude;
-    @SerializedName("team_id")
+    @SerializedName("team")
     @Expose
-    private Integer teamId;
+    private Integer team;
     @SerializedName("created_at")
     @Expose
     private String createdAt;
@@ -103,18 +103,18 @@ public class TeamLocation extends RealmObject  {
     /**
      *
      * @return
-     * The teamId
+     * The team
      */
-    public Integer getTeamId() {
-        return teamId;
+    public Integer getTeam() {
+        return team;
     }
     /**
      *
-     * @param teamId
+     * @param team
      * The team_id
      */
-    public void setTeamId(Integer teamId) {
-        this.teamId = teamId;
+    public void setTeam(Integer team) {
+        this.team = team;
     }
     /**
      *

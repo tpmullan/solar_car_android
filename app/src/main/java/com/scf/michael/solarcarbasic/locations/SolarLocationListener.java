@@ -13,9 +13,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.scf.michael.solarcarbasic.MainActivity;
 import com.scf.michael.solarcarbasic.api.ClosedTrackSolarApiEndpoint;
 import com.scf.michael.solarcarbasic.api.ServiceGenerator;
 import com.scf.michael.solarcarbasic.api.TeamLocation;
@@ -30,8 +27,6 @@ import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by tom on 2/4/17.
@@ -71,7 +66,7 @@ public class SolarLocationListener implements LocationListener {
         newLoc.setLatitude(location.getLatitude());
         newLoc.setAltitude(location.getAltitude());
         newLoc.setAccuracy(location.getAccuracy());
-        newLoc.setTeamId(TeamIndex);
+        newLoc.setTeam(TeamIndex);
         newLoc.setUpdatedAt(Calendar.getInstance().getTime().toString());
 
         realm.commitTransaction();

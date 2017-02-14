@@ -59,6 +59,7 @@ public class MainActivity extends BaseActivity {
         realm.beginTransaction();
         defaultUser.setUsername("tom");
         defaultUser.setPassword("1992joy321");
+        defaultUser.setToken(null);
         realm.commitTransaction();
 
         defaultUser.login();
