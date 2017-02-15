@@ -33,8 +33,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class ServiceGenerator {
 
-    //private static final String BASE_URL = "https://solar.tpmullan.com/api/";
-    private static final String BASE_URL = "http://desktop:8000/api/";
+    private static final String BASE_URL = "https://solar.tpmullan.com/api/";
+    //private static final String BASE_URL = "http://desktop:8000/api/";
 
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 

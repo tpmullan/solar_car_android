@@ -54,6 +54,13 @@ public class Auth extends RealmObject {
     final Realm realm = Realm.getDefaultInstance();
 
     final Auth self = this;
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        self.setToken(null);
+      }
+    });
+
     Call<Auth> call =  endpoint.login(realm.copyFromRealm(self));
       call.enqueue(new Callback<Auth>() {
         @Override
