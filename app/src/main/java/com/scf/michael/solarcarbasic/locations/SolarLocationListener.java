@@ -34,7 +34,7 @@ import retrofit2.Response;
 
 public class SolarLocationListener implements LocationListener {
 
-    private static final String TAG = "LocationListner";
+    private static final String TAG = "LocationListener";
 
     public Location mLastLocation;
     private Context mContext;
