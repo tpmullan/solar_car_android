@@ -76,6 +76,7 @@ public class SolarLocationListener implements LocationListener {
 
         String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
         Float batteryPct = batteryInfo();
+        //Toast.makeText(mContext.getApplicationContext(), newLoc.getTeam(), Toast.LENGTH_LONG).show();
 
         // Send data to Shane's server
         call.enqueue(new Callback<TeamLocation>() {
@@ -83,12 +84,15 @@ public class SolarLocationListener implements LocationListener {
             public void onResponse(Call<TeamLocation> call, Response<TeamLocation> response) {
                 int statusCode = response.code();
                 TeamLocation receivedLoc = response.body();
+                //Toast.makeText(mContext.getApplicationContext(), "POST!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(mContext.getApplicationContext(), receivedLoc.getTeam(), Toast.LENGTH_LONG).show();
             }
 
             @Override /*if you get an error, do this*/
             public void onFailure(Call<TeamLocation> call, Throwable t) {
                 // Log error here since request failed
                 Log.e(TAG, "Failed to post location");
+                //Toast.makeText(mContext.getApplicationContext(), "Failed to post location", Toast.LENGTH_LONG).show();
             }
 
         });
