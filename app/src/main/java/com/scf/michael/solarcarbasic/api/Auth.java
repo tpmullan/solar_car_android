@@ -53,28 +53,35 @@ public class Auth extends RealmObject {
     ClosedTrackSolarApiEndpoint endpoint = ServiceGenerator.createService(ClosedTrackSolarApiEndpoint.class);
     final Realm realm = Realm.getDefaultInstance();
 
-    Call<Auth> call =  endpoint.login(realm.copyFromRealm(this));
+    final Auth self = this;
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        self.setToken(null);
+      }
+    });
+
+    Call<Auth> call =  endpoint.login(realm.copyFromRealm(self));
       call.enqueue(new Callback<Auth>() {
         @Override
         public void onResponse(Call<Auth> call, final Response<Auth> response) {
           if (response.isSuccessful()) {
-
             realm.executeTransaction(
                     new Realm.Transaction() {
                       @Override
                       public void execute(Realm realm) {
-                        setToken(response.body().getToken());
+                        self.setToken(response.body().getToken());
                       }
                     }
             );
           } else {
-            Log.e(TAG,"Error logging in");
+            Log.e(TAG,"Not successfull logging " + response.message()+"\n"+call.request().method());
           }
         }
 
         @Override
         public void onFailure(Call<Auth> call, Throwable t) {
-          Log.e(TAG,"Error logging in");
+          Log.e(TAG,"Error with network logging in");
         }
       });
   }
@@ -90,13 +97,11 @@ public class Auth extends RealmObject {
     return first;
   }
 
-  public Request setHeaders(Request original) {
+  public Request.Builder setHeaders(Request.Builder requestBuilder) {
     // Request customization: add request headers
-    Request.Builder requestBuilder = original.newBuilder()
-            .method(original.method(), original.body());
     if (getToken()!=null && !getToken().equals("")) {
       requestBuilder.header("Authorization", "Token " + getToken());
     }
-    return requestBuilder.build();
+    return requestBuilder;
   }
 }

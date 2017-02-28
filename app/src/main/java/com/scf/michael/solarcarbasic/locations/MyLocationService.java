@@ -16,7 +16,8 @@ public class MyLocationService extends Service {
 
     private static final String TAG = "MyLocationService";
     private static final int LOCATION_INTERVAL = 2000; //Update every 2 sec
-    private static final float LOCATION_DISTANCE = 10f;
+    //private static final float LOCATION_DISTANCE = 10f;
+    private static final float LOCATION_DISTANCE = 0;
     LocationListener mLocationListener;
     private LocationManager mLocationManager = null;
 
@@ -55,7 +56,7 @@ public class MyLocationService extends Service {
         super.onDestroy();
         if (mLocationManager != null) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Log.i(TAG, "fail to remove location listners, ignore");
+                Log.i(TAG, "fail to remove location listeners, ignore");
                 return;
             }
             mLocationManager.removeUpdates(mLocationListener);

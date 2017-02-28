@@ -13,9 +13,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.scf.michael.solarcarbasic.MainActivity;
 import com.scf.michael.solarcarbasic.api.ClosedTrackSolarApiEndpoint;
 import com.scf.michael.solarcarbasic.api.ServiceGenerator;
 import com.scf.michael.solarcarbasic.api.TeamLocation;
@@ -30,8 +27,6 @@ import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by tom on 2/4/17.
@@ -39,7 +34,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SolarLocationListener implements LocationListener {
 
-    private static final String TAG = "LocationListner";
+    private static final String TAG = "LocationListener";
 
     public Location mLastLocation;
     private Context mContext;
@@ -71,16 +66,17 @@ public class SolarLocationListener implements LocationListener {
         newLoc.setLatitude(location.getLatitude());
         newLoc.setAltitude(location.getAltitude());
         newLoc.setAccuracy(location.getAccuracy());
-        newLoc.setTeamId(TeamIndex);
+        newLoc.setTeam(TeamIndex);
         newLoc.setUpdatedAt(Calendar.getInstance().getTime().toString());
 
         realm.commitTransaction();
 
         //send data to server
-        Call<TeamLocation> call = apiService.createTeamLocation(newLoc);
+        Call<TeamLocation> call = apiService.createTeamLocation(realm.copyFromRealm(newLoc));
 
         String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
         Float batteryPct = batteryInfo();
+        //Toast.makeText(mContext.getApplicationContext(), newLoc.getTeam(), Toast.LENGTH_LONG).show();
 
         // Send data to Shane's server
         call.enqueue(new Callback<TeamLocation>() {
@@ -88,12 +84,15 @@ public class SolarLocationListener implements LocationListener {
             public void onResponse(Call<TeamLocation> call, Response<TeamLocation> response) {
                 int statusCode = response.code();
                 TeamLocation receivedLoc = response.body();
+                //Toast.makeText(mContext.getApplicationContext(), "POST!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(mContext.getApplicationContext(), receivedLoc.getTeam(), Toast.LENGTH_LONG).show();
             }
 
             @Override /*if you get an error, do this*/
             public void onFailure(Call<TeamLocation> call, Throwable t) {
                 // Log error here since request failed
                 Log.e(TAG, "Failed to post location");
+                //Toast.makeText(mContext.getApplicationContext(), "Failed to post location", Toast.LENGTH_LONG).show();
             }
 
         });
