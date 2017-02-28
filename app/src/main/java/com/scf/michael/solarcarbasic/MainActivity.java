@@ -16,10 +16,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.scf.michael.solarcarbasic.api.Auth;
 import com.scf.michael.solarcarbasic.api.TeamLocation;
 import com.scf.michael.solarcarbasic.locations.MyLocationService;
 
+import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 
 public class MainActivity extends BaseActivity {
@@ -33,6 +35,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
         // Get the LocationManager object from the System Service LOCATION_SERVICE
