@@ -28,14 +28,14 @@ public class MyLocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG, "onStartCommand");
+        //Log.e(TAG, "onStartCommand");
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
     }
 
     @Override
     public void onCreate() {
-        Log.e(TAG, "onCreate");
+        //Log.e(TAG, "onCreate");
         initializeLocationManager();
         try {
             mLocationListener = new SolarLocationListener(LocationManager.GPS_PROVIDER, getApplicationContext());
@@ -44,19 +44,19 @@ public class MyLocationService extends Service {
                     LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE, mLocationListener
             );
         } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
+            //Log.i(TAG, "fail to request location update, ignore", ex);
         } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "network provider does not exist, " + ex.getMessage());
+            //Log.d(TAG, "network provider does not exist, " + ex.getMessage());
         }
     }
 
     @Override
     public void onDestroy() {
-        Log.e(TAG, "onDestroy");
+        //Log.e(TAG, "onDestroy");
         super.onDestroy();
         if (mLocationManager != null) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Log.i(TAG, "fail to remove location listeners, ignore");
+                //Log.i(TAG, "fail to remove location listeners, ignore");
                 return;
             }
             mLocationManager.removeUpdates(mLocationListener);
@@ -64,7 +64,7 @@ public class MyLocationService extends Service {
     }
 
     private void initializeLocationManager() {
-        Log.e(TAG, "initializeLocationManager");
+        //Log.e(TAG, "initializeLocationManager");
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }

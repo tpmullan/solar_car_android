@@ -75,13 +75,13 @@ public class Auth extends RealmObject {
                     }
             );
           } else {
-            Log.e(TAG,"Not successfull logging " + response.message()+"\n"+call.request().method());
+            //Log.e(TAG,"Not successfull logging " + response.message()+"\n"+call.request().method());
           }
         }
 
         @Override
         public void onFailure(Call<Auth> call, Throwable t) {
-          Log.e(TAG,"Error with network logging in");
+          //Log.e(TAG,"Error with network logging in");
         }
       });
   }

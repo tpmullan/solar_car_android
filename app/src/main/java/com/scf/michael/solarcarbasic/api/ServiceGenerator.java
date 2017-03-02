@@ -67,8 +67,8 @@ public class ServiceGenerator {
             @Override
             public Response intercept(Interceptor.Chain chain) throws IOException {
                 Request original = chain.request();
-                Log.d("RETROFIT request", bodyToString(original.body()));
-                Log.d("RETROFIT params", original.url().toString());
+                //Log.d("RETROFIT request", bodyToString(original.body()));
+                //Log.d("RETROFIT params", original.url().toString());
 
 
                 Auth authToken = Auth.getInstance();
@@ -78,12 +78,12 @@ public class ServiceGenerator {
                 requestBuilder.header("Accept","application/json");
                 Request requestWithHeaders = authToken.setHeaders(requestBuilder).build();
 
-                Log.d("RETROFIT headers", requestWithHeaders.headers().toString());
+                //Log.d("RETROFIT headers", requestWithHeaders.headers().toString());
 
                 Response response = chain.proceed(requestWithHeaders);
 
                 String body = response.body().string();
-                Log.d("RETROFIT response", body);
+                //Log.d("RETROFIT response", body);
                 if (response.code() == 422 && body.equals("Invalid authenticity token")) {
                     response = chain.proceed(authToken.setHeaders(requestBuilder).build());
                     //authToken.update(response.headers());

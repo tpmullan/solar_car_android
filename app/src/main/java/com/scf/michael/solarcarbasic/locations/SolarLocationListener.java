@@ -43,7 +43,7 @@ public class SolarLocationListener implements LocationListener {
     public int TeamIndex=1;
     public SolarLocationListener(String provider, Context context)
     {
-        Log.e(TAG, "SolarLocationListener " + provider);
+        //Log.e(TAG, "SolarLocationListener " + provider);
         mLastLocation = new Location(provider);
         mContext = context;
         apiService = ServiceGenerator.createService(ClosedTrackSolarApiEndpoint.class);
@@ -59,7 +59,7 @@ public class SolarLocationListener implements LocationListener {
 
         Realm realm = Realm.getDefaultInstance();
 
-        realm.beginTransaction();
+        realm.beginTransaction();  //MFMFMF
 
         TeamLocation newLoc = realm.createObject(TeamLocation.class);
         newLoc.setLongitude(location.getLongitude());
@@ -69,7 +69,7 @@ public class SolarLocationListener implements LocationListener {
         newLoc.setTeam(TeamIndex);
         newLoc.setUpdatedAt(Calendar.getInstance().getTime().toString());
 
-        realm.commitTransaction();
+        realm.commitTransaction();  //MFMFMF
 
         //send data to server
         Call<TeamLocation> call = apiService.createTeamLocation(realm.copyFromRealm(newLoc));
@@ -91,7 +91,7 @@ public class SolarLocationListener implements LocationListener {
             @Override /*if you get an error, do this*/
             public void onFailure(Call<TeamLocation> call, Throwable t) {
                 // Log error here since request failed
-                Log.e(TAG, "Failed to post location");
+                //Log.e(TAG, "Failed to post location");
                 //Toast.makeText(mContext.getApplicationContext(), "Failed to post location", Toast.LENGTH_LONG).show();
             }
 
@@ -121,17 +121,17 @@ public class SolarLocationListener implements LocationListener {
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        Log.e(TAG, "onStatusChanged: " + provider);
+        //Log.e(TAG, "onStatusChanged: " + provider);
     }
 
     @Override
     public void onProviderEnabled(String s) {
-        Log.e(TAG, "onProviderEnabled: " + s);
+        //Log.e(TAG, "onProviderEnabled: " + s);
     }
 
     @Override
     public void onProviderDisabled(String s) {
-        Log.e(TAG, "onProviderDisabled: " + s);
+        //Log.e(TAG, "onProviderDisabled: " + s);
     }
 
     public void createFile(String string) {
