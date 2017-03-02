@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,6 +50,7 @@ public class SolarLocationListener implements LocationListener {
         apiService = ServiceGenerator.createService(ClosedTrackSolarApiEndpoint.class);
     }
 
+
     @Override
     public void onLocationChanged(Location location) {
         // if the accuracy is really bad, back out
@@ -71,12 +73,14 @@ public class SolarLocationListener implements LocationListener {
 
         realm.commitTransaction();  //MFMFMF
 
+
+
         //send data to server
         Call<TeamLocation> call = apiService.createTeamLocation(realm.copyFromRealm(newLoc));
 
         String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
         Float batteryPct = batteryInfo();
-        //Toast.makeText(mContext.getApplicationContext(), newLoc.getTeam(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(mContext.getApplicationContext(), realm.copyFromRealm(newLoc).getTeam(), Toast.LENGTH_LONG).show();
 
         // Send data to Shane's server
         call.enqueue(new Callback<TeamLocation>() {
@@ -100,6 +104,11 @@ public class SolarLocationListener implements LocationListener {
 
 
         createFile(getFileString(location, newLoc, Phone_ID, batteryPct)); //CreateFile -writes important data to a csv file
+        realm.close();
+
+        RealmConfiguration config = realm.getConfiguration();
+        Realm.compactRealm(config);
+
     }
 
     @NonNull

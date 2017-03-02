@@ -93,6 +93,7 @@ public class Auth extends RealmObject {
       realm.beginTransaction();
       first = realm.createObject(Auth.class);
       realm.commitTransaction();
+      realm.close();
     }
     return first;
   }
