@@ -59,11 +59,11 @@ public class SolarLocationListener implements LocationListener {
             return;
         }
 
-        Realm realm = Realm.getDefaultInstance();
+        final Realm realm = Realm.getDefaultInstance();
 
         realm.beginTransaction();  //MFMFMF
 
-        TeamLocation newLoc = realm.createObject(TeamLocation.class);
+        final TeamLocation newLoc = realm.createObject(TeamLocation.class);
         newLoc.setLongitude(location.getLongitude());
         newLoc.setLatitude(location.getLatitude());
         newLoc.setAltitude(location.getAltitude());
@@ -72,8 +72,6 @@ public class SolarLocationListener implements LocationListener {
         newLoc.setUpdatedAt(Calendar.getInstance().getTime().toString());
 
         realm.commitTransaction();  //MFMFMF
-
-
 
         //send data to server
         Call<TeamLocation> call = apiService.createTeamLocation(realm.copyFromRealm(newLoc));
@@ -87,9 +85,17 @@ public class SolarLocationListener implements LocationListener {
             @Override /*If you get a response, do this*/
             public void onResponse(Call<TeamLocation> call, Response<TeamLocation> response) {
                 int statusCode = response.code();
-                TeamLocation receivedLoc = response.body();
-                //Toast.makeText(mContext.getApplicationContext(), "POST!", Toast.LENGTH_LONG).show();
-                //Toast.makeText(mContext.getApplicationContext(), receivedLoc.getTeam(), Toast.LENGTH_LONG).show();
+                if (response.isSuccessful()){
+                    TeamLocation receivedLoc = response.body();
+
+                    realm.beginTransaction();
+                    newLoc.setRemoteId(receivedLoc.getRemoteId());
+                    realm.commitTransaction();
+                    //Toast.makeText(mContext.getApplicationContext(), "POST!", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(mContext.getApplicationContext(), receivedLoc.getTeam(), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(mContext.getApplicationContext(), "Failed POST!", Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override /*if you get an error, do this*/
@@ -98,17 +104,13 @@ public class SolarLocationListener implements LocationListener {
                 //Log.e(TAG, "Failed to post location");
                 //Toast.makeText(mContext.getApplicationContext(), "Failed to post location", Toast.LENGTH_LONG).show();
             }
-
         });
-
-
 
         createFile(getFileString(location, newLoc, Phone_ID, batteryPct)); //CreateFile -writes important data to a csv file
         realm.close();
 
         RealmConfiguration config = realm.getConfiguration();
         Realm.compactRealm(config);
-
     }
 
     @NonNull
@@ -125,7 +127,6 @@ public class SolarLocationListener implements LocationListener {
         }
 
         return output;
-
     }
 
     @Override
@@ -149,46 +150,44 @@ public class SolarLocationListener implements LocationListener {
                 Environment.MEDIA_MOUNTED)) {
             // you can go on
 
-        String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd");
+            String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd");
 
-        String filename= "SolarCarTracker-" + Phone_ID + "-" + tf.format(calendar.getTime()) +".csv";
+            String filename= "SolarCarTracker-" + Phone_ID + "-" + tf.format(calendar.getTime()) +".csv";
 
-        final File myDir = Environment.getExternalStorageDirectory().getAbsoluteFile();
+            final File myDir = Environment.getExternalStorageDirectory().getAbsoluteFile();
 
-        try {
-            File myFile = new File(myDir.getPath(), filename);
+            try {
+                File myFile = new File(myDir.getPath(), filename);
 
-            if(!myDir.exists()){
-                myDir.mkdirs(); //make the folders where we write folders
-            }
+                if(!myDir.exists()){
+                    myDir.mkdirs(); //make the folders where we write folders
+                }
 
-            if ( !myFile.exists()) {
-                myFile.createNewFile();  //make the file where we write information
+                if ( !myFile.exists()) {
+                    myFile.createNewFile();  //make the file where we write information
+
+                    FileOutputStream fOut = new FileOutputStream(myFile, true); //true means we append
+                    OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+                    myOutWriter.append("Phone ID, Time, Latitude, Longitude, , Battery Pct, Altitude, Status, Judge, Team, Accuracy, Speed, Bearing");
+                    myOutWriter.append("\n");
+                    myOutWriter.close();
+                    fOut.close();
+                }
 
                 FileOutputStream fOut = new FileOutputStream(myFile, true); //true means we append
                 OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
-                myOutWriter.append("Phone ID, Time, Latitude, Longitude, , Battery Pct, Altitude, Status, Judge, Team, Accuracy, Speed, Bearing");
+                myOutWriter.append(string);
                 myOutWriter.append("\n");
                 myOutWriter.close();
                 fOut.close();
+
+            }catch (Exception e){
+                e.printStackTrace();
+                Toast.makeText(mContext.getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
-
-            FileOutputStream fOut = new FileOutputStream(myFile, true); //true means we append
-            OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
-            myOutWriter.append(string);
-            myOutWriter.append("\n");
-            myOutWriter.close();
-            fOut.close();
-
-        }catch (Exception e){
-            e.printStackTrace();
-            Toast.makeText(mContext.getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-
         }
-        }
-
     }
 
     public float batteryInfo (){
