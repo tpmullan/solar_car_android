@@ -16,7 +16,6 @@ import java.net.HttpCookie;
 import java.net.URI;
 import java.util.TimeZone;
 
-import io.realm.RealmObject;
 import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
@@ -40,17 +39,7 @@ public class ServiceGenerator {
 
     private static Gson gson =
             new GsonBuilder()
-                    .setExclusionStrategies(new ExclusionStrategy() {
-                        @Override
-                        public boolean shouldSkipField(FieldAttributes f) {
-                            return f.getDeclaringClass().equals(RealmObject.class);
-                        }
-
-                        @Override
-                        public boolean shouldSkipClass(Class<?> clazz) {
-                            return false;
-                        }
-                    })
+                    .excludeFieldsWithoutExposeAnnotation()
                     .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
                     .create();
 

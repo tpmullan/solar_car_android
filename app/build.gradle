@@ -14,11 +14,9 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-apply plugin: 'realm-android'
-
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.scf.michael.solarcarbasic"
@@ -43,9 +41,9 @@ dependencies {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
 
-    compile "com.android.support:support-core-utils:25.1.1"
-    compile 'com.android.support:support-v13:25.1.1'
-    compile 'com.google.android.gms:play-services-location:10.0.1'
+    compile "com.android.support:support-core-utils:25.2.0"
+    compile 'com.android.support:support-v13:25.2.0'
+    compile 'com.google.android.gms:play-services-location:10.2.0'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
@@ -53,10 +51,11 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp-urlconnection:3.6.0'
     provided 'org.glassfish:javax.annotation:10.0-b28'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
-    compile 'com.android.support:design:25.1.1'
+    compile 'com.android.support:design:25.2.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
         transitive = true;
     }
+    compile 'com.github.satyan:sugar:1.4'
 }
 
 

@@ -1,29 +1,37 @@
 package com.scf.michael.solarcarbasic.api;
 
 import android.util.Log;
+
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.internal.Streams;
 
 import java.io.IOException;
+import com.orm.SugarRecord;
 
-import io.realm.Realm;
-import io.realm.RealmObject;
 import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Auth extends RealmObject {
+public class Auth extends SugarRecord {
 
   private static final String TAG = "Auth Class";
+  @Expose
   @SerializedName("token")
   private String token;
 
+  @Expose
   @SerializedName("username")
   private String username;
 
+  @Expose
   @SerializedName("password")
   private String password;
+
+  public Auth() {
+
+  }
 
   public String getToken() {
     return token;
@@ -51,29 +59,19 @@ public class Auth extends RealmObject {
 
   public void login() {
     ClosedTrackSolarApiEndpoint endpoint = ServiceGenerator.createService(ClosedTrackSolarApiEndpoint.class);
-    final Realm realm = Realm.getDefaultInstance();
 
     final Auth self = this;
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        self.setToken(null);
-      }
-    });
+    self.setToken(null);
 
-    Call<Auth> call =  endpoint.login(realm.copyFromRealm(self));
+    Call<Auth> call =  endpoint.login(self);
       call.enqueue(new Callback<Auth>() {
         @Override
         public void onResponse(Call<Auth> call, final Response<Auth> response) {
           if (response.isSuccessful()) {
-            realm.executeTransaction(
-                    new Realm.Transaction() {
-                      @Override
-                      public void execute(Realm realm) {
-                        self.setToken(response.body().getToken());
-                      }
-                    }
-            );
+
+            self.setToken(response.body().getToken());
+            self.save();
+
           } else {
             //Log.e(TAG,"Not successfull logging " + response.message()+"\n"+call.request().method());
           }
@@ -87,13 +85,10 @@ public class Auth extends RealmObject {
   }
 
   public static Auth getInstance() {
-    Realm realm = Realm.getDefaultInstance();
-    Auth first = realm.where(Auth.class).findFirst();
+    Auth first =  Auth.findById(Auth.class, (long) 1);
     if (first == null) {
-      realm.beginTransaction();
-      first = realm.createObject(Auth.class);
-      realm.commitTransaction();
-      realm.close();
+      first = new Auth();
+      first.save();
     }
     return first;
   }

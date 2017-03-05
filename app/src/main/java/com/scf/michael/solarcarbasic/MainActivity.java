@@ -22,7 +22,6 @@ import com.scf.michael.solarcarbasic.api.TeamLocation;
 import com.scf.michael.solarcarbasic.locations.MyLocationService;
 
 import io.fabric.sdk.android.Fabric;
-import io.realm.Realm;
 
 public class MainActivity extends BaseActivity {
 
@@ -57,12 +56,11 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        Realm realm = getRealm();
         Auth defaultUser = Auth.getInstance();
-        realm.beginTransaction();
+        //realm.beginTransaction();
         defaultUser.setUsername("tom");
         defaultUser.setPassword("1992joy321");
-        realm.commitTransaction();
+        //realm.commitTransaction();
 
         defaultUser.login();
     }
@@ -150,11 +148,9 @@ public class MainActivity extends BaseActivity {
                 Toast tp = Toast.makeText(getApplicationContext(), "This app will not work without that permission", Toast.LENGTH_LONG);
                 tp.getView().setOnClickListener(new View.OnClickListener() {
                                                     @Override
-                                                    public void onClick(View view) {
-                                                        enable_service();
+                                                    public void onClick(View view) {enable_service();
                                                     }
-                                                }
-                );
+                                                });
                 tp.show();
             }
         }

@@ -23,8 +23,6 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,22 +57,17 @@ public class SolarLocationListener implements LocationListener {
             return;
         }
 
-        final Realm realm = Realm.getDefaultInstance();
-
-        realm.beginTransaction();  //MFMFMF
-
-        final TeamLocation newLoc = realm.createObject(TeamLocation.class);
+        final TeamLocation newLoc = new TeamLocation();
         newLoc.setLongitude(location.getLongitude());
         newLoc.setLatitude(location.getLatitude());
         newLoc.setAltitude(location.getAltitude());
         newLoc.setAccuracy(location.getAccuracy());
         newLoc.setTeam(TeamIndex);
         newLoc.setUpdatedAt(Calendar.getInstance().getTime().toString());
-
-        realm.commitTransaction();  //MFMFMF
+        newLoc.save();
 
         //send data to server
-        Call<TeamLocation> call = apiService.createTeamLocation(realm.copyFromRealm(newLoc));
+        Call<TeamLocation> call = apiService.createTeamLocation(newLoc);
 
         String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
         Float batteryPct = batteryInfo();
@@ -88,9 +81,8 @@ public class SolarLocationListener implements LocationListener {
                 if (response.isSuccessful()){
                     TeamLocation receivedLoc = response.body();
 
-                    realm.beginTransaction();
                     newLoc.setRemoteId(receivedLoc.getRemoteId());
-                    realm.commitTransaction();
+                    newLoc.save();
                     //Toast.makeText(mContext.getApplicationContext(), "POST!", Toast.LENGTH_LONG).show();
                     //Toast.makeText(mContext.getApplicationContext(), receivedLoc.getTeam(), Toast.LENGTH_LONG).show();
                 } else {
@@ -107,10 +99,6 @@ public class SolarLocationListener implements LocationListener {
         });
 
         createFile(getFileString(location, newLoc, Phone_ID, batteryPct)); //CreateFile -writes important data to a csv file
-        realm.close();
-
-        RealmConfiguration config = realm.getConfiguration();
-        Realm.compactRealm(config);
     }
 
     @NonNull

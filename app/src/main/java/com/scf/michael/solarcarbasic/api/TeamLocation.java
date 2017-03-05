@@ -3,12 +3,10 @@ package com.scf.michael.solarcarbasic.api;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import javax.annotation.Generated;
-
-import io.realm.RealmObject ;
-
+import com.orm.SugarRecord;
 
 @Generated("org.jsonschema2pojo")
-public class TeamLocation extends RealmObject  {
+public class TeamLocation extends SugarRecord {
     @SerializedName("id")
     @Expose
     private Integer remote_id;
@@ -36,6 +34,9 @@ public class TeamLocation extends RealmObject  {
     @SerializedName("accuracy")
     @Expose
     private Float accuracy;
+
+
+    public TeamLocation() {}
     /**
      *
      * @return

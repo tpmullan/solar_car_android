@@ -15,12 +15,14 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-        <meta-data android:name="AA_DB_NAME" android:value="SolarCar.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="1" />
-        <meta-data
-            android:name="AA_MODELS"
-            android:value="com.scf.michael.solarcarbasic.api.Auth, com.scf.michael.solarcarbasic.api.TeamLocation" />
+        android:theme="@style/AppTheme"
+        android:name="SolarCarBasicApplication">
+
+        <meta-data android:name="DATABASE" android:value="SolarCar.db" />
+        <meta-data android:name="VERSION" android:value="1" />
+        <meta-data android:name="QUERY_LOG" android:value="true" />
+        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.scf.michael.solarcarbasic" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
