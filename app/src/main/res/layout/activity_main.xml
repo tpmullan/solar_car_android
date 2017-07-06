@@ -12,4 +12,15 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/start_service" />
+
+    <TextView
+        android:id="@+id/Phone_ID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/start_service"
+        android:layout_alignStart="@+id/start_service"
+        android:layout_below="@+id/start_service"
+        android:text="TextView"
+        android:layout_alignRight="@+id/start_service"
+        android:layout_alignEnd="@+id/start_service"/>
 </RelativeLayout>
