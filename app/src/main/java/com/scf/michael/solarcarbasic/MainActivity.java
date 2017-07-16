@@ -3,6 +3,7 @@ package com.scf.michael.solarcarbasic;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -36,11 +38,15 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
+        //String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String Phone_ID = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // Get the LocationManager object from the System Service LOCATION_SERVICE
         mLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
 
         locationService = new Intent(MainActivity.this, MyLocationService.class);
+        final TextView txt_Phone_ID = (TextView) findViewById(R.id.Phone_ID);
+        txt_Phone_ID.setText(Phone_ID);
 
         final Button button_start = (Button) findViewById(R.id.start_service);
         button_start.setOnClickListener(new View.OnClickListener() {
@@ -131,6 +137,7 @@ public class MainActivity extends BaseActivity {
                 });
         //Show AlertDialog
         NoLocationAlertDialog.show();
+
 
     }
 

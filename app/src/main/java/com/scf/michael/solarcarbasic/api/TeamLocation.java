@@ -34,6 +34,9 @@ public class TeamLocation extends SugarRecord {
     @SerializedName("accuracy")
     @Expose
     private Float accuracy;
+    //@SerializedName("sent_to_server")
+    //@Expose
+    //private boolean sent_to_server;
 
 
     public TeamLocation() {}
@@ -169,4 +172,14 @@ public class TeamLocation extends SugarRecord {
     public void setAccuracy(float accuracy) {
         this.accuracy = accuracy;
     }
+
+    public Float getAccuracy() {
+        return accuracy;
+    }
+
+    //public void set_sent_to_server(boolean sent_to_server) {this.sent_to_server=sent_to_server;}
+    //public boolean get_sent_to_server(){
+       // return sent_to_server;
+    //}
+
 }

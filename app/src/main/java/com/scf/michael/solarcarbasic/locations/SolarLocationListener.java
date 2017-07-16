@@ -22,10 +22,12 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 
 /**
  * Created by tom on 2/4/17.
@@ -63,7 +65,18 @@ public class SolarLocationListener implements LocationListener {
         newLoc.setAltitude(location.getAltitude());
         newLoc.setAccuracy(location.getAccuracy());
         newLoc.setTeam(TeamIndex);
-        newLoc.setUpdatedAt(Calendar.getInstance().getTime().toString());
+
+        //yyyy-MM-dd'T'HH:mm:ss.SSSZ
+        //SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        //Date date = fmt.parse(Calendar.getInstance().getTime().toString());
+
+        SimpleDateFormat fmtOut = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        String tmpNow= fmtOut.format(Calendar.getInstance().getTime());
+
+        Calendar.getInstance().getTime();
+        //SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        newLoc.setUpdatedAt(tmpNow);
+        newLoc.setCreatedAt(tmpNow);
         newLoc.save();
 
         //send data to server
@@ -133,6 +146,7 @@ public class SolarLocationListener implements LocationListener {
     }
 
     public void createFile(String string) {
+        //public void createFile(String string) {
 
         if (Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
@@ -141,8 +155,9 @@ public class SolarLocationListener implements LocationListener {
             String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
             Calendar calendar = Calendar.getInstance();
             SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd");
+            //SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-            String filename= "SolarCarTracker-" + Phone_ID + "-" + tf.format(calendar.getTime()) +".csv";
+            String filename= "SolarCarTracker-" + Phone_ID + "-" + tf.format(calendar.getTime()) +".txt";
 
             final File myDir = Environment.getExternalStorageDirectory().getAbsoluteFile();
 
@@ -189,4 +204,6 @@ public class SolarLocationListener implements LocationListener {
 
         return batteryPct;
     }
+
+
 }
