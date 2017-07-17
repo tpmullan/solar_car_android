@@ -18,6 +18,7 @@
         android:theme="@style/AppTheme"
         android:name="SolarCarBasicApplication">
 
+
         <meta-data android:name="DATABASE" android:value="SolarCar.db" />
         <meta-data android:name="VERSION" android:value="1" />
         <meta-data android:name="QUERY_LOG" android:value="true" />
@@ -36,6 +37,7 @@
         <receiver android:name=".myBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.net.wifi.STATE_CHANGE" />
+
             </intent-filter>
         </receiver>
 
@@ -57,5 +59,6 @@
             android:name="io.fabric.ApiKey"
             android:value="b8b35c75a6993c2996eee4ffd99a8bfd171d772b" />
     </application>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
 </manifest>
