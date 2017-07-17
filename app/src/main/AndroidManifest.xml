@@ -47,6 +47,12 @@
             android:name=".locations.MyLocationService"
             android:enabled="true"
             android:exported="true"/>
+
+        <service
+            android:name=".ResendData"
+            android:enabled="true"
+            android:exported="true"/>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="b8b35c75a6993c2996eee4ffd99a8bfd171d772b" />
