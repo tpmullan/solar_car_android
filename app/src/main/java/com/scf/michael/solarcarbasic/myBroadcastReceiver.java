@@ -77,7 +77,7 @@ import static java.security.AccessController.getContext;
             Toast.makeText(context, "starting sending", Toast.LENGTH_SHORT).show();
             TeamLocation newLoc = TeamLocation.findById(TeamLocation.class,1);
             //while (newLoc.getUpdatedAt() != null) {
-            while (newLoc.getUpdatedAt() != null && senttoservercnt<700) {
+            while (newLoc.getUpdatedAt() != null && senttoservercnt<1) {
                 //Toast.makeText(context, "here", Toast.LENGTH_SHORT).show();
                 if (newLoc.getRemoteId() == null ){
                     //Toast.makeText(context, "not sent: ".concat(Integer.toString(tmpint)).concat(" "), Toast.LENGTH_SHORT).show();

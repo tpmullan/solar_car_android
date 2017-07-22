@@ -34,6 +34,10 @@ public class TeamLocation extends SugarRecord {
     @SerializedName("accuracy")
     @Expose
     private Float accuracy;
+    @SerializedName("uuid")
+    @Expose
+    private String uuid;
+
     //@SerializedName("sent_to_server")
     //@Expose
     //private boolean sent_to_server;
@@ -177,9 +181,15 @@ public class TeamLocation extends SugarRecord {
         return accuracy;
     }
 
+    public void setuuid(String uuid) { this.uuid = uuid; }
+    public String getuuid(String uuid){return uuid;}
+
+    public Integer getId(Integer id){return id;}
+
     //public void set_sent_to_server(boolean sent_to_server) {this.sent_to_server=sent_to_server;}
     //public boolean get_sent_to_server(){
        // return sent_to_server;
     //}
+
 
 }
