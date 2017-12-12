@@ -16,8 +16,8 @@ public class MyLocationService extends Service {
 
     private static final String TAG = "MyLocationService";
     private static final int LOCATION_INTERVAL = 2000; //Update every 2 sec
-    //private static final float LOCATION_DISTANCE = 10f;
-    private static final float LOCATION_DISTANCE = 0;
+    private static final float LOCATION_DISTANCE = 10f;
+    //private static final float LOCATION_DISTANCE = 0;
     LocationListener mLocationListener;
     private LocationManager mLocationManager = null;
 

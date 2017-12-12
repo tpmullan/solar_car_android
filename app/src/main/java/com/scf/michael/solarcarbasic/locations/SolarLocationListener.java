@@ -54,7 +54,7 @@ public class SolarLocationListener implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         // if the accuracy is really bad, back out
-        if (location.getAccuracy()>100) {
+        if (location.getAccuracy()>50) {
             //Toast.makeText(getBaseContext(), " ", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -77,12 +77,14 @@ public class SolarLocationListener implements LocationListener {
         //SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         newLoc.setUpdatedAt(tmpNow);
         newLoc.setCreatedAt(tmpNow);
+        String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
+        newLoc.setuuid(Phone_ID);
+
         newLoc.save();
 
         //send data to server
         Call<TeamLocation> call = apiService.createTeamLocation(newLoc);
 
-        String Phone_ID = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
         Float batteryPct = batteryInfo();
         //Toast.makeText(mContext.getApplicationContext(), realm.copyFromRealm(newLoc).getTeam(), Toast.LENGTH_LONG).show();
 

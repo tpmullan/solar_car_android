@@ -34,4 +34,8 @@ public interface ClosedTrackSolarApiEndpoint {
     Call<TeamLocation> updateTeamLocation(@Path("id") int teamId, @Body TeamLocation team_location);
     @POST("auth/")
     Call<Auth> login(@Body Auth user);
+
+    @POST("team_locations/mass_create/")
+    Call<StatusMessage> createTeamLocations(@Body TeamLocationsWrapper team_location_wrapper);
+
 }
